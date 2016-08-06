@@ -14,7 +14,7 @@ Run the following command in the root directory of your Node-RED install
 Usage
 -----
 
-Only one node with an output is available. More to come in near future. Only use this for personal use. This node depends on the data from buienradar.nl, for commercial use of their service please contact them directly. I am not related to buienradar.nl in any way.
+Only one node with an input/output is available. More to come in near future. Only use this for personal use. This node depends on the data from buienradar.nl, for commercial use of their service please contact them directly. I am not related to buienradar.nl in any way.
 
 
 ### Buienradar Node
