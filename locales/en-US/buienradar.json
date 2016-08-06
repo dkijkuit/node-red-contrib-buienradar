@@ -1,0 +1,23 @@
+{
+    "buienradar": {
+        "label": {
+			"name" : "Naam",
+			"station" : "Station",
+			"interval": "Interval",
+			"option_10_seconds": "10 seconden",
+			"option_30_seconds": "30 seconden",
+			"option_1_minute": "1 minuut",
+			"option_5_minutes": "5 minuten",
+			"option_10_minutes": "10 minuten",
+			"option_30_minutes": "30 minuten",
+			"option_1_hour": "1 uur",
+            "option_manual": "Handmatig"
+        },
+        "placeholder": {
+            "name": "Naam"
+        },
+        "status": {
+            "requesting": "requesting"
+        }
+    }
+}

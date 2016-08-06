@@ -1,0 +1,128 @@
+<script type="text/javascript">
+    var stationnamen = [
+            "Meetstation Arcen",
+            "Meetstation Arnhem",
+            "Meetstation Berkhout",
+            "Meetstation Cadzand",
+            "Meetstation De Bilt",
+            "Meetstation Den Helder",
+            "Meetstation Eindhoven",
+            "Meetstation Ell",
+            "Meetstation Euro platform",
+            "Meetstation Gilze Rijen",
+            "Meetstation Groenlo-Hupsel",
+            "Meetstation Groningen",
+            "Meetstation Hansweert",
+            "Meetstation Heino",
+            "Meetstation Herwijnen",
+            "Meetstation Hoek van Holland",
+            "Meetstation Hoofdplaat",
+            "Meetstation Hoogeveen",
+            "Meetstation Hoorn Terschelling",
+            "Meetstation Houtribdijk",
+            "Meetstation Huibertgat",
+            "Meetstation IJmond",
+            "Meetstation IJmuiden",
+            "Meetstation Lauwersoog",
+            "Meetstation LE Goeree",
+            "Meetstation Leeuwarden",
+            "Meetstation Lelystad",
+            "Meetstation Lopik-Cabauw",
+            "Meetstation Maastricht",
+            "Meetstation Marknesse",
+            "Meetstation Nieuw Beerta",
+            "Meetstation Oosterschelde",
+            "Meetstation Rotterdam",
+            "Meetstation Rotterdam Geulhaven",
+            "Meetstation Schaar",
+            "Meetstation Schiphol",
+            "Meetstation Stavenisse",
+            "Meetstation Stavoren",
+            "Meetstation Tholen",
+            "Meetstation Twente",
+            "Meetstation Vlakte aan de Raan",
+            "Meetstation Vlieland",
+            "Meetstation Vlissingen",
+            "Meetstation Volkel",
+            "Meetstation Voorschoten",
+            "Meetstation Westdorpe",
+            "Meetstation Wijdenes",
+            "Meetstation Wijk aan Zee",
+            "Meetstation Woensdrecht",
+            "Meetstation Zeeplatform F-3",
+            "Meetstation Zeeplatform K13"
+        ];
+
+    var stationIDs = [
+        "6391","6275","6249","6308","6260","6235","6370","6377","6321","6350","6283","6280","6315","6278","6356","6330","6311","6279","6251","6258","6285","6209","6225","6277","6320","6270","6269","6348","6380","6273","6286","6312","6344","6343","6316","6240","6324","6267","6331","6290","6313","6242","6310","6375","6215","6319","6248","6257","6340","6239","6252"
+    ];
+
+    RED.nodes.registerType('buienradar',{
+        category: 'weather',
+        color: '#3FADB5',
+        defaults: {
+            name: {value:""},
+            station: {value:"6260"},
+            interval: {value:"60000"}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "logor.png",
+        label: function() {
+            return this.name||"buienradar";
+        },
+        oneditprepare: function() {
+            //$('#node-input-station').html('');
+            for(var i=0; i<stationnamen.length; i++){
+                if(this.station==stationIDs[i]){
+                    $("#node-input-station").append("<option value='"+stationIDs[i]+"' selected>"+stationnamen[i]+"</option>");
+                }else{
+                    $("#node-input-station").append("<option value='"+stationIDs[i]+"'>"+stationnamen[i]+"</option>");
+                }
+            }
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="buienradar">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> <span data-i18n="buienradar.label.name"></span></label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-station"><i class="fa fa-globe"></i> <span data-i18n="buienradar.label.station"></span></label>
+        <select id="node-input-station" placeholder="Station" style="width: 70%;"></select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-interval"><i class="fa fa-clock-o"></i> <span data-i18n="buienradar.label.interval"></span></label>
+        <select id="node-input-interval" style="width: 70%;">
+            <option value="10000" data-i18n="buienradar.label.option_10_seconds"></option>
+            <option value="30000" data-i18n="buienradar.label.option_30_seconds"></option>
+			<option value="60000" data-i18n="buienradar.label.option_1_minute"></option>
+			<option value="300000" data-i18n="buienradar.label.option_5_minutes"></option>
+			<option value="600000" selected data-i18n="buienradar.label.option_10_minutes"></option>
+			<option value="1800000" data-i18n="buienradar.label.option_30_minutes"></option>
+			<option value="3600000" data-i18n="buienradar.label.option_1_hour"></option>
+			<option value="manual" data-i18n="buienradar.label.option_manual"></option>
+        </select>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="buienradar">
+    <p>Current weather data from buienradar.nl. This node polls the xml feed from buienradar.nl for the specified weather station and interval. A <code>'buienradar'</code> object is added to the <code>msg.payload</code> containing the data.</p>
+	<ul>
+        <li><code>stationcode</code> - unique station code which corresponds to a weather station</li>
+		<li><code>stationnaam</code> - the weather station name</li>
+		<li><code>temperatuurGC</code> - temperature in degrees celsius</li>
+		<li><code>windsnelheidBF</code> - windspeed in beaufort</li>
+		<li><code>luchtvochtigheid</code> - humidity in percentage</li>
+		<li><code>datum</code> - the datetime of the measurement</li>
+		<li><code>zichtmeters</code> - sight in meters</li>
+		<li><code>icoonactueel</code> - an URL to the current weather icon</li>
+		<li><code>icoonzin</code> - short description of the current weather</li>
+		<li><code>regenMMPU</code> - rain in millimeters per hour</li>
+		<li><code>luchtdruk</code> - air pressure</li>
+		<li><code>windrichtingGR</code> - wind direction in degrees</li>
+		<li><code>windrichting</code> - wind direction</li>
+	</ul>
+</script>
