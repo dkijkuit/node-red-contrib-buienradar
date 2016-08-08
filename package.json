@@ -6,6 +6,7 @@
         "xpath" : "0.0.23",
         "xmldom" : "0.1.22"
     },
+    "homepage" : "https://github.com/dkijkuit/node-red-contrib-buienradar",
     "keywords": [ "node-red", "weather", "weer", "buienradar", "knmi" ],
     "node-red"     : {
         "nodes": {
