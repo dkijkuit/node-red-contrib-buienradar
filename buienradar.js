@@ -63,55 +63,59 @@ module.exports = function(RED) {
                     var nodes = xpath.select("//weerstation[@id=\""+node.station+"\"]", doc);
 
                     //console.log(nodes[0].localName + ": " + nodes[0].firstChild.data);
-                    var childNodes = nodes[0].childNodes;
+                    if(nodes!=null && nodes.length>0){
+                        var childNodes = nodes[0].childNodes;
 
-                    for(var i=0; i<childNodes.length; i++){
-                        var childNode = childNodes[i];
-                        //console.log(childNode.localName + ": " + childNode.firstChild.data);
-                        switch(childNode.localName){
-                            case "stationcode":
-                                msg.payload.buienradar.stationcode = childNode.firstChild.data;
-                                break;
-                            case "stationnaam":
-                                msg.payload.buienradar.stationnaam = childNode.firstChild.data;
-                                break;
-                            case "temperatuurGC":
-                                msg.payload.buienradar.temperatuurGC = childNode.firstChild.data;
-                                break;
-                            case "windsnelheidBF":
-                                msg.payload.buienradar.windsnelheidBF = childNode.firstChild.data;
-                                break;
-                            case "luchtvochtigheid":
-                                msg.payload.buienradar.luchtvochtigheid = childNode.firstChild.data;
-                                break;
-                            case "datum":
-                                msg.payload.buienradar.datum = childNode.firstChild.data;
-                                break;
-                            case "zichtmeters":
-                                msg.payload.buienradar.zichtmeters = childNode.firstChild.data;
-                                break;
-                            case "icoonactueel":
-                                msg.payload.buienradar.icoonactueel = childNode.firstChild.data;
-                                msg.payload.buienradar.icoonzin = childNode.getAttribute('zin');
-                                break;
-                            case "regenMMPU":
-                                msg.payload.buienradar.regenMMPU = childNode.firstChild.data;
-                                break;
-                            case "luchtdruk":
-                                msg.payload.buienradar.luchtdruk = childNode.firstChild.data;
-                                break;
-                            case "windrichtingGR":
-                                msg.payload.buienradar.windrichtingGR = childNode.firstChild.data;
-                                break;
-                            case "windrichting":
-                                msg.payload.buienradar.windrichting = childNode.firstChild.data;
-                                break;
-                            default:
-                                break;
+                        for(var i=0; i<childNodes.length; i++){
+                            var childNode = childNodes[i];
+                            //console.log(childNode.localName + ": " + childNode.firstChild.data);
+                            switch(childNode.localName){
+                                case "stationcode":
+                                    msg.payload.buienradar.stationcode = childNode.firstChild.data;
+                                    break;
+                                case "stationnaam":
+                                    msg.payload.buienradar.stationnaam = childNode.firstChild.data;
+                                    break;
+                                case "temperatuurGC":
+                                    msg.payload.buienradar.temperatuurGC = childNode.firstChild.data;
+                                    break;
+                                case "windsnelheidBF":
+                                    msg.payload.buienradar.windsnelheidBF = childNode.firstChild.data;
+                                    break;
+                                case "luchtvochtigheid":
+                                    msg.payload.buienradar.luchtvochtigheid = childNode.firstChild.data;
+                                    break;
+                                case "datum":
+                                    msg.payload.buienradar.datum = childNode.firstChild.data;
+                                    break;
+                                case "zichtmeters":
+                                    msg.payload.buienradar.zichtmeters = childNode.firstChild.data;
+                                    break;
+                                case "icoonactueel":
+                                    msg.payload.buienradar.icoonactueel = childNode.firstChild.data;
+                                    msg.payload.buienradar.icoonzin = childNode.getAttribute('zin');
+                                    break;
+                                case "regenMMPU":
+                                    msg.payload.buienradar.regenMMPU = childNode.firstChild.data;
+                                    break;
+                                case "luchtdruk":
+                                    msg.payload.buienradar.luchtdruk = childNode.firstChild.data;
+                                    break;
+                                case "windrichtingGR":
+                                    msg.payload.buienradar.windrichtingGR = childNode.firstChild.data;
+                                    break;
+                                case "windrichting":
+                                    msg.payload.buienradar.windrichting = childNode.firstChild.data;
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
-                    }
 
-                    callback();
+                        callback();
+                    }else{
+                        node.log("Failed to parse result from buienradar.nl, is the host still accessible?");
+                    }
                 });
 
                 req.on('error', function(err) {
