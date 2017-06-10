@@ -47,7 +47,7 @@ module.exports = function(RED) {
 
         //node.log("Requesting buienradar update ...");
 
-        var url = "xml.buienradar.nl";
+        var url = "http://xml.buienradar.nl";
         if (url) {
             node.status({fill:"blue",shape:"dot",text:"Ophalen weergegevens"});
             var req = http.get(url, function(res) {
