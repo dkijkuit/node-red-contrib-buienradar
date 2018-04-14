@@ -1,7 +1,7 @@
 module.exports = function(RED) {
     var xpath = require("xpath");
     var xmldom = require("xmldom").DOMParser;
-    var http = require("https");
+    var https = require("https");
 
     function BuienradarNode(config) {
         RED.nodes.createNode(this,config);
@@ -50,7 +50,7 @@ module.exports = function(RED) {
         var url = "https://xml.buienradar.nl";
         if (url) {
             node.status({fill:"blue",shape:"dot",text:"Ophalen weergegevens"});
-            var req = http.get(url, function(res) {
+            var req = https.get(url, function(res) {
                 // save the data
                 var xml = '';
                 res.on('data', function(chunk) {
