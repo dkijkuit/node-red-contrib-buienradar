@@ -117,12 +117,13 @@ module.exports = function(RED) {
                         node.log("Failed to parse result from buienradar.nl, is the host still accessible?");
                     }
                 });
-
-                req.on('error', function(err) {
-                    callback(err);
-                    node.log("Failed: "+err);
-                });
             });
+
+            req.on('error', function(err) {
+                callback(err);
+                node.log("Failed: "+err);
+            });
+            
             node.status({});
         }
     }
