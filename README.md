@@ -39,5 +39,8 @@ Current conditions will return
 - **luchtdruk** - air pressure
 - **windrichtingGR** - wind direction in degrees
 - **windrichting** - wind direction
+- **zonintensiteitWM2** - sun intensity in watt per square meter
+- **windsnelheidMS** - wind speed in meters per second
+- **windstotenMS** - winds in meters per second
 
 Weather data provided by <a href="http://www.buienradar.nl/" target="_blank">Buienradar</a>

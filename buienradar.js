@@ -107,6 +107,15 @@ module.exports = function(RED) {
                                 case "windrichting":
                                     msg.payload.buienradar.windrichting = childNode.firstChild.data;
                                     break;
+                                case "zonintensiteitWM2":
+                                    msg.payload.buienradar.zonintensiteitWM2 = childNode.firstChild.data;
+                                    break;
+                                case "windsnelheidMS":
+                                    msg.payload.buienradar.windsnelheidMS = childNode.firstChild.data;
+                                    break;
+                                case "windstotenMS":
+                                    msg.payload.buienradar.windstotenMS = childNode.firstChild.data;
+                                    break;
                                 default:
                                     break;
                             }
