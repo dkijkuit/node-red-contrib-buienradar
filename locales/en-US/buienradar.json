@@ -11,7 +11,8 @@
 			"option_10_minutes": "10 minuten",
 			"option_30_minutes": "30 minuten",
 			"option_1_hour": "1 uur",
-            "option_manual": "Handmatig"
+            "option_manual": "Handmatig",
+            "include_forecast": "Verwachting"
         },
         "placeholder": {
             "name": "Naam"

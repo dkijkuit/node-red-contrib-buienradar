@@ -63,7 +63,8 @@
         defaults: {
             name: {value:""},
             station: {value:"6260"},
-            interval: {value:"60000"}
+            interval: {value:"60000"},
+            forecast: {value: false}
         },
         inputs:1,
         outputs:1,
@@ -103,6 +104,10 @@
 			<option value="3600000" data-i18n="buienradar.label.option_1_hour"></option>
 			<option value="manual" data-i18n="buienradar.label.option_manual"></option>
         </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-forecast"><i class="fa fa-area-chart"></i> <span data-i18n="buienradar.label.include_forecast"></span></label>
+        <input type="checkbox" id="node-input-forecast" placeholder="Verwachting">
     </div>
 </script>
 

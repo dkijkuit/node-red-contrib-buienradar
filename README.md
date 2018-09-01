@@ -26,6 +26,8 @@ Outputs a **msg.payload.buienradar** object which holds all the data.
 
 Current conditions will return
 
+- **verwachtingMeerdaags** - Forecast for upcoming days (detailed object)
+- **verwachtingVandaag** - Forecast for today (detailed object)
 - **stationcode** - unique station code which corresponds to a weather station
 - **stationnaam** - the weather station name
 - **temperatuurGC** - temperature in degrees celsius

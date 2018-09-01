@@ -1,43 +1,47 @@
-module.exports = function(RED) {
+module.exports = function (RED) {
     var xpath = require("xpath");
     var xmldom = require("xmldom").DOMParser;
     var https = require("https");
 
     function BuienradarNode(config) {
-        RED.nodes.createNode(this,config);
+        RED.nodes.createNode(this, config);
 
         var node = this;
         node.interval_id = null;
 
-        if(config.interval){
-			node.interval = config.interval;
-		}
+        if (config.interval) {
+            node.interval = config.interval;
+        }
 
-        if(config.station){
-			node.station = config.station;
-		}
+        if (config.station) {
+            node.station = config.station;
+        }
+
+        if (config.forecast) {
+            node.forecast = config.forecast;
+        }
 
         //node.log("Buienradar station set to: "+node.station+", config: "+config.station);
 
-        if(node.interval!="manual"){
-            this.interval_id = setInterval( function() {
-                node.emit("input",{});
+        if (node.interval != "manual") {
+            this.interval_id = setInterval(function () {
+                node.emit("input", {});
             }, node.interval);
         }
 
-        this.on('input', function(msg) {
-            buienradarPoll(node, msg, function(err){
+        this.on('input', function (msg) {
+            buienradarPoll(node, msg, function (err) {
                 node.send(msg);
             });
         });
 
-        this.on("close", function() {
+        this.on("close", function () {
             if (this.interval_id !== null) {
                 clearInterval(this.interval_id);
             }
         });
 
-        node.emit("input",{});
+        node.emit("input", {});
     }
 
     function buienradarPoll(node, msg, callback) {
@@ -45,31 +49,36 @@ module.exports = function(RED) {
         msg.payload = {};
         msg.payload.buienradar = {};
 
+        if (node.forecast) {
+            msg.payload.buienradar.verwachtingMeerdaags = {};
+            msg.payload.buienradar.verwachtingVandaag = {};
+        }
+
         //node.log("Requesting buienradar update ...");
 
         var url = "https://xml.buienradar.nl";
         if (url) {
-            node.status({fill:"blue",shape:"dot",text:"Ophalen weergegevens"});
-            var req = https.get(url, function(res) {
+            node.status({ fill: "blue", shape: "dot", text: "Ophalen weergegevens" });
+            var req = https.get(url, function (res) {
                 // save the data
                 var xml = '';
-                res.on('data', function(chunk) {
+                res.on('data', function (chunk) {
                     xml += chunk;
                 });
 
-                res.on('end', function() {
+                res.on('end', function () {
                     //node.log("Incoming xml size: "+xml.length);
                     var doc = new xmldom().parseFromString(xml)
-                    var nodes = xpath.select("//weerstation[@id=\""+node.station+"\"]", doc);
+                    var nodes = xpath.select("//weerstation[@id=\"" + node.station + "\"]", doc);
 
                     //console.log(nodes[0].localName + ": " + nodes[0].firstChild.data);
-                    if(nodes!=null && nodes.length>0){
+                    if (nodes != null && nodes.length > 0) {
                         var childNodes = nodes[0].childNodes;
 
-                        for(var i=0; i<childNodes.length; i++){
+                        for (var i = 0; i < childNodes.length; i++) {
                             var childNode = childNodes[i];
                             //console.log(childNode.localName + ": " + childNode.firstChild.data);
-                            switch(childNode.localName){
+                            switch (childNode.localName) {
                                 case "stationcode":
                                     msg.payload.buienradar.stationcode = childNode.firstChild.data;
                                     break;
@@ -121,20 +130,138 @@ module.exports = function(RED) {
                             }
                         }
 
+                        if (node.forecast) {
+                            nodes = xpath.select("//verwachting_meerdaags", doc);
+
+                            if (nodes != null && nodes.length > 0) {
+                                var childNodes = nodes[0].childNodes;
+
+                                for (var i = 0; i < childNodes.length; i++) {
+                                    var childNode = childNodes[i];
+                                    if (childNode != null) {
+                                        switch (childNode.localName) {
+                                            case "url":
+                                                msg.payload.buienradar.verwachtingMeerdaags.url = childNode.data;
+                                                break;
+                                            case "tekst_middellang":
+                                                msg.payload.buienradar.verwachtingMeerdaags.tekstMiddelLang = {};
+                                                msg.payload.buienradar.verwachtingMeerdaags.tekstMiddelLang.titel = childNode.getAttribute("periode");
+                                                msg.payload.buienradar.verwachtingMeerdaags.tekstMiddelLang.beschrijving = childNode.firstChild.data;
+                                                break;
+                                            case "dag-plus1":
+                                            case "dag-plus2":
+                                            case "dag-plus3":
+                                            case "dag-plus4":
+                                            case "dag-plus5":
+                                                var dayNo = "dag" + childNode.localName.substring(8);
+                                                msg.payload.buienradar.verwachtingMeerdaags[dayNo] = {};
+
+                                                for (var j = 0; j < childNode.childNodes.length; j++) {
+                                                    var forecastChildNode = childNode.childNodes[j];
+                                                    if (forecastChildNode.localName != null) {
+                                                        switch (forecastChildNode.localName) {
+                                                            case "datum":
+                                                                msg.payload.buienradar.verwachtingMeerdaags[dayNo].datum = forecastChildNode.firstChild.data;
+                                                                break;
+                                                            case "dagweek":
+                                                                msg.payload.buienradar.verwachtingMeerdaags[dayNo].dagweek = forecastChildNode.firstChild.data;
+                                                                break;
+                                                            case "kanszon":
+                                                                msg.payload.buienradar.verwachtingMeerdaags[dayNo].kanszon = forecastChildNode.firstChild.data;
+                                                                break;
+                                                            case "kansregen":
+                                                                msg.payload.buienradar.verwachtingMeerdaags[dayNo].kansregen = forecastChildNode.firstChild.data;
+                                                                break;
+                                                            case "minmmregen":
+                                                                msg.payload.buienradar.verwachtingMeerdaags[dayNo].minmmregen = forecastChildNode.firstChild.data;
+                                                                break;
+                                                            case "maxmmregen":
+                                                                msg.payload.buienradar.verwachtingMeerdaags[dayNo].maxmmregen = forecastChildNode.firstChild.data;
+                                                                break;
+                                                            case "mintemp":
+                                                                msg.payload.buienradar.verwachtingMeerdaags[dayNo].mintemp = forecastChildNode.firstChild.data;
+                                                                break;
+                                                            case "mintempmax":
+                                                                msg.payload.buienradar.verwachtingMeerdaags[dayNo].mintempmax = forecastChildNode.firstChild.data;
+                                                                break;
+                                                            case "maxtemp":
+                                                                msg.payload.buienradar.verwachtingMeerdaags[dayNo].maxtemp = forecastChildNode.firstChild.data;
+                                                                break;
+                                                            case "maxtempmax":
+                                                                msg.payload.buienradar.verwachtingMeerdaags[dayNo].maxtempmax = forecastChildNode.firstChild.data;
+                                                                break;
+                                                            case "windrichting":
+                                                                msg.payload.buienradar.verwachtingMeerdaags[dayNo].windrichting = forecastChildNode.firstChild.data;
+                                                                break;
+                                                            case "windkracht":
+                                                                msg.payload.buienradar.verwachtingMeerdaags[dayNo].windkracht = forecastChildNode.firstChild.data;
+                                                                break;
+                                                            default:
+                                                                break;
+                                                        }
+                                                    }
+                                                }
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                }
+                            }
+
+
+                            nodes = xpath.select("//verwachting_vandaag", doc);
+
+                            if (nodes != null && nodes.length > 0) {
+                                var childNodes = nodes[0].childNodes;
+
+                                node.log("Node: " + childNodes.length);
+
+                                for (var i = 0; i < childNodes.length; i++) {
+                                    var childNode = childNodes[i];
+
+                                    if (childNode != null) {
+                                        switch (childNode.localName) {
+                                            case "url":
+                                                msg.payload.buienradar.verwachtingVandaag.url = childNode.firstChild.data;
+                                                break;
+                                            case "titel":
+                                                msg.payload.buienradar.verwachtingVandaag.titel = childNode.firstChild.data;
+                                                break;
+                                            case "tijdweerbericht":
+                                                msg.payload.buienradar.verwachtingVandaag.tijdweerbericht = childNode.firstChild.data;
+                                                break;
+                                            case "samenvatting":
+                                                msg.payload.buienradar.verwachtingVandaag.samenvatting = childNode.firstChild.data;
+                                                break;
+                                            case "formattedtekst":
+                                                msg.payload.buienradar.verwachtingVandaag.formattedtekst = childNode.firstChild.data;
+                                                break;
+                                            case "tekst":
+                                                msg.payload.buienradar.verwachtingVandaag.tekst = childNode.firstChild.data;
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         callback();
-                    }else{
+                    } else {
                         node.log("Failed to parse result from buienradar.nl, is the host still accessible?");
                     }
                 });
             });
 
-            req.on('error', function(err) {
+            req.on('error', function (err) {
                 callback(err);
-                node.log("Failed: "+err);
+                node.log("Failed: " + err);
             });
-            
+
             node.status({});
         }
     }
+
     RED.nodes.registerType("buienradar", BuienradarNode);
 }
