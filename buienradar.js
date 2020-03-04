@@ -194,6 +194,9 @@ module.exports = function (RED) {
                                                                 case "windkracht":
                                                                     msg.payload.buienradar.verwachtingMeerdaags[dayNo].windkracht = forecastChildNode.firstChild.data;
                                                                     break;
+                                                                case "icoon":
+                                                                    msg.payload.buienradar.verwachtingMeerdaags[dayNo].icoon = forecastChildNode.firstChild.data;
+                                                                    break;
                                                                 default:
                                                                     break;
                                                             }
