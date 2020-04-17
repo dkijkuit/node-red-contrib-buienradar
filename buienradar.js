@@ -1,6 +1,4 @@
 module.exports = function (RED) {
-    var xpath = require("xpath");
-    var xmldom = require("xmldom").DOMParser;
     var https = require("https");
 
     function BuienradarNode(config) {
