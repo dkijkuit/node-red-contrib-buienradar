@@ -113,6 +113,7 @@ module.exports = function (RED) {
 
                 var weerVandaag = buienradarResponse.forecast.weatherreport;
                 if (weerVandaag != null) {
+                    msg.payload.buienradar.verwachtingVandaag = {};
                     msg.payload.buienradar.verwachtingVandaag.titel = weerVandaag.title;
                     msg.payload.buienradar.verwachtingVandaag.tijdweerbericht = weerVandaag.published;
                     msg.payload.buienradar.verwachtingVandaag.samenvatting = weerVandaag.summary;
